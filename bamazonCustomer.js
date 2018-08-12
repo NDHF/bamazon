@@ -1,3 +1,5 @@
+// BAMAZON CUSTOMER INTERFACE
+
 var mysql = require('mysql');
 
 var inquirer = require('inquirer');
@@ -31,8 +33,7 @@ function showItemsForSale() {
                     product_name: result[i].product_name,
                     department_name: result[i].department_name,
                     price: result[i].price,
-                    stock_quantity: result[i].stock_quantity
-                };
+                    stock_quantity: result[i].stock_quantity                };
                 data.push(object);
             }
             data.forEach(function (product) {
@@ -72,7 +73,11 @@ function checkItemAvailability(array, item_id, howManyAreBeingBought) {
             console.log("Sorry, we don't have enough items to complete that order.");
         } else if ((array[i].item_id === item_id) && (array[i].stock_quantity >= howManyAreBeingBought)) {
             console.log("Thank you for your order.");
-            console.log("Your total is $" + (parseInt(array[i].price) * parseInt(howManyAreBeingBought)) + ".");
+            var productSales = (parseInt(array[i].price) * parseInt(howManyAreBeingBought));
+            console.log("Your total is $" + productSales + ".");
+            con.query("UPDATE products SET product_sales = product_sales + " + productSales + " WHERE item_id = " + item_id, function (err, result, fields) {
+                if (err) throw err; 
+            });
             updateInventory(howManyAreBeingBought, parseInt(item_id));
         }
     }
